@@ -423,20 +423,26 @@ img { max-width: 100%; display: block; }
 }
 
 /* ---------- Certifications ---------- */
-.cert { text-align: left; }
-.cert h3 { font-size: 1rem; margin: 10px 0 6px; }
-.cert-date { color: var(--text-muted); font-size: 0.85rem; margin: 0; }
-.cert-issuer {
-  display: inline-block;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  padding: 4px 10px;
-  border-radius: var(--radius-pill);
-  color: #fff;
+.cert {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  color: var(--text);
+  padding: 28px 20px;
+  transition: transform 0.25s var(--ease), box-shadow 0.25s var(--ease);
 }
-.cert-issuer.aws { background: #ff9900; }
-.cert-issuer.ibm { background: #1f70c1; }
+.cert:hover { transform: translateY(-6px); }
+.cert-badge {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  margin-bottom: 16px;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.18));
+}
+.cert h3 { font-size: 0.98rem; margin: 0 0 6px; line-height: 1.35; }
+.cert-date { color: var(--text-muted); font-size: 0.82rem; margin: 0; }
 .cert-cta { text-align: center; margin-top: 32px; }
 .cert-cta a { color: var(--accent-2); font-weight: 700; text-decoration: none; }
 
