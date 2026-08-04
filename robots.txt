@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jovanjose02.github.io/Personal_Projects/sitemap.xml
