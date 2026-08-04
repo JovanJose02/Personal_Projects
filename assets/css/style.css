@@ -6,9 +6,9 @@
 :root {
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
 
-  --accent-1: #5B8DEF;
-  --accent-2: #8B6BF2;
-  --accent-3: #33C9DB;
+  --accent-1: #2F8FEF;
+  --accent-2: #17B8A6;
+  --accent-3: #34D399;
 
   --radius-lg: 28px;
   --radius-md: 20px;
@@ -26,8 +26,8 @@
   --glass-border: rgba(255,255,255,0.6);
   --glass-shadow: 0 8px 32px rgba(31,38,71,0.12), inset 0 1px 0 rgba(255,255,255,0.6);
   --nav-bg: rgba(255,255,255,0.55);
-  --chip-bg: rgba(91,141,239,0.12);
-  --chip-text: #33508f;
+  --chip-bg: rgba(23,184,166,0.14);
+  --chip-text: #0f6d63;
 }
 
 :root[data-theme="dark"] {
@@ -39,8 +39,8 @@
   --glass-border: rgba(255,255,255,0.12);
   --glass-shadow: 0 8px 32px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.06);
   --nav-bg: rgba(20,21,27,0.55);
-  --chip-bg: rgba(139,107,242,0.18);
-  --chip-text: #c9bcfb;
+  --chip-bg: rgba(52,211,153,0.18);
+  --chip-text: #8ff0c8;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -229,9 +229,9 @@ img { max-width: 100%; display: block; }
 .btn-primary {
   color: #fff;
   background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
-  box-shadow: 0 8px 24px rgba(91,141,239,0.35);
+  box-shadow: 0 8px 24px rgba(47,143,239,0.35);
 }
-.btn-primary:hover { box-shadow: 0 12px 28px rgba(91,141,239,0.45); }
+.btn-primary:hover { box-shadow: 0 12px 28px rgba(47,143,239,0.45); }
 .btn-glass {
   color: var(--text);
   background: var(--glass-bg);
@@ -450,7 +450,7 @@ img { max-width: 100%; display: block; }
 .cert-badge-link:hover,
 .cert-badge-link:focus-visible {
   transform: scale(1.08);
-  box-shadow: 0 10px 26px rgba(91,141,239,0.35);
+  box-shadow: 0 10px 26px rgba(47,143,239,0.35);
 }
 .cert-badge {
   width: 84px;
@@ -469,7 +469,7 @@ img { max-width: 100%; display: block; }
   background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
   padding: 6px 14px;
   border-radius: var(--radius-pill);
-  box-shadow: 0 6px 16px rgba(91,141,239,0.32);
+  box-shadow: 0 6px 16px rgba(47,143,239,0.32);
 }
 .cert-cta { text-align: center; margin-top: 32px; }
 .cert-cta a { color: var(--accent-2); font-weight: 700; text-decoration: none; }
