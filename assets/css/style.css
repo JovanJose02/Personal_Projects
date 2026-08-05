@@ -29,6 +29,7 @@
   --nav-bg: rgba(255,255,255,0.55);
   --chip-bg: rgba(23,184,166,0.14);
   --chip-text: #0f6d63;
+  --bg-scrim: rgba(238,241,248,0.87);
 }
 
 :root[data-theme="dark"] {
@@ -43,6 +44,7 @@
   --nav-bg: rgba(20,21,27,0.55);
   --chip-bg: rgba(52,211,153,0.18);
   --chip-text: #8ff0c8;
+  --bg-scrim: rgba(8,10,15,0.32);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -58,6 +60,7 @@
     --nav-bg: rgba(20,21,27,0.55);
     --chip-bg: rgba(52,211,153,0.18);
     --chip-text: #8ff0c8;
+    --bg-scrim: rgba(8,10,15,0.32);
   }
 }
 
@@ -94,32 +97,31 @@ img { max-width: 100%; display: block; }
 }
 .skip-link:focus { left: 16px; top: 16px; }
 
-/* ---------- Aurora background ---------- */
-.bg-aurora {
+/* ---------- Photo background ---------- */
+.bg-photo {
   position: fixed;
   inset: 0;
   z-index: -1;
-  overflow: hidden;
-  background: var(--bg);
-}
-.blob {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.55;
+  background-image: linear-gradient(var(--bg-scrim), var(--bg-scrim)), url('../images/bg/network-bg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: bgKenBurns 40s ease-in-out infinite alternate;
   will-change: transform;
 }
-.blob-1 { width: 46vw; height: 46vw; top: -12vw; left: -10vw; background: var(--accent-1); animation: float1 22s ease-in-out infinite; }
-.blob-2 { width: 40vw; height: 40vw; top: 10vw; right: -14vw; background: var(--accent-2); animation: float2 26s ease-in-out infinite; }
-.blob-3 { width: 38vw; height: 38vw; bottom: -16vw; left: 20vw; background: var(--accent-3); animation: float3 30s ease-in-out infinite; }
 
-@keyframes float1 { 0%,100% { transform: translate(0,0) scale(1);} 50% { transform: translate(4vw, 6vw) scale(1.08);} }
-@keyframes float2 { 0%,100% { transform: translate(0,0) scale(1);} 50% { transform: translate(-5vw, 4vw) scale(1.1);} }
-@keyframes float3 { 0%,100% { transform: translate(0,0) scale(1);} 50% { transform: translate(3vw, -5vw) scale(1.05);} }
+@keyframes bgKenBurns {
+  0% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.07) translate(-1.2%, -0.8%); }
+  100% { transform: scale(1.12) translate(1%, 0.6%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-photo { animation: none; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .blob { animation: none; }
 }
 
 /* ---------- Glass core ---------- */
