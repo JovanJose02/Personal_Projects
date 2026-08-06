@@ -70,21 +70,13 @@ This site is hosted on **Vercel**, a free static-site host. It is **not** runnin
 
 ### Deploying an update
 
-Right now deploys are **manual** (the GitHub → Vercel auto-deploy connection is pending — see below). From the project folder:
+The Vercel project is connected to this GitHub repo, so **every `git push` to `main` deploys automatically** — no manual step needed. Watch it happen under the **Deployments** tab on [vercel.com](https://vercel.com).
+
+If you ever need to deploy without pushing (e.g. testing local-only changes), you can still do it manually from the project folder:
 
 ```bash
 npx vercel --prod --yes
 ```
-
-This uploads the current files and publishes them straight to the live URL, typically in under a minute.
-
-### Turning on auto-deploy from GitHub (recommended, one-time)
-
-Once this is set up, every `git push` to `main` deploys automatically — no need to run the command above manually.
-
-1. Open **https://github.com/apps/vercel/installations/new** and install/authorize the Vercel GitHub App on the `JovanJose02` account, granting it access to `Personal_Projects`.
-2. Run `npx vercel git connect --yes` from the project folder (or connect it from the Vercel dashboard → Project → Settings → Git).
-3. From then on, pushing to `main` triggers a deploy automatically, viewable under the **Deployments** tab on [vercel.com](https://vercel.com).
 
 ### Custom domain (optional, later)
 
