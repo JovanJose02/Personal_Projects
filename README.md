@@ -1,19 +1,18 @@
 # Jovan Jose Asker Fredy — Portfolio Website
 
-A personal portfolio website showcasing my background as a Computer Science / Data Science &amp; AI student, built with plain HTML, CSS, and JavaScript in an Apple "liquid glass" visual style (frosted, translucent panels over an animated gradient background, light/dark mode).
+A personal portfolio website showcasing my background as a Computer Science / Data Science &amp; AI student, built with plain HTML, CSS, and JavaScript in an Apple "liquid glass" visual style (frosted, translucent panels over a photo background, light/dark mode).
 
-**Live site:** https://jovanjose02.github.io/Personal_Projects/
+**Live site:** https://jovan-portfolio-eta.vercel.app
 
 ---
 
 ## Tech Stack
 
 - **HTML5 / CSS3 / vanilla JavaScript** — no framework, no build step, no dependencies to install.
-- **Google Fonts (Inter)** loaded via CDN for typography, with a system-font fallback stack.
-- **GitHub Pages** for free, always-on static hosting.
-- **GitHub Actions** (`.github/workflows/deploy.yml`) to automatically build and deploy the site on every push to `main`.
+- **Google Fonts (Poppins)** loaded via CDN as the web fallback for Century Gothic (the site's primary declared font — not available on most systems by default, so Poppins is what most visitors actually see).
+- **Vercel** for free, always-on static hosting.
 
-Because there's no build step, the site runs identically whether opened as a local file or served on GitHub Pages.
+Because there's no build step, the site runs identically whether opened as a local file or served on Vercel.
 
 ---
 
@@ -27,12 +26,14 @@ Personal_Projects/
 │   ├── js/main.js             # Theme toggle, nav, scroll reveal, headshot swap
 │   ├── images/
 │   │   ├── favicon.svg
-│   │   └── headshot-placeholder.svg   # Shown until you add a real photo (see below)
+│   │   ├── headshot-placeholder.svg   # Shown until you add a real photo (see below)
+│   │   ├── bg/network-bg.png  # Full-page background photo
+│   │   ├── logos/              # Employer/school logos (Experience & Education)
+│   │   └── certs/              # Certification badge images
 │   └── resume/
 │       └── resume.pdf         # Add your resume PDF here (see below)
 ├── sitemap.xml                 # For search engine indexing
 ├── robots.txt                  # Allows all crawlers, points to sitemap
-├── .github/workflows/deploy.yml  # CI/CD: auto-deploys to GitHub Pages
 └── README.md
 ```
 
@@ -65,30 +66,32 @@ Any changes you make to `index.html`, `assets/css/style.css`, or `assets/js/main
 
 ## How Hosting Works (so it stays live even with your terminal/computer off)
 
-This site is hosted on **GitHub Pages**, GitHub's free static-site hosting. It is **not** running on your machine — it's served directly from GitHub's servers, so it stays online 24/7 regardless of whether your laptop is on, asleep, or your terminal is closed.
+This site is hosted on **Vercel**, a free static-site host. It is **not** running on your machine — it's served from Vercel's global CDN, so it stays online 24/7 regardless of whether your laptop is on, asleep, or your terminal is closed. (We moved here from GitHub Pages after a GitHub Actions/Pages outage — Vercel isn't affected by GitHub's infrastructure at all.)
 
-Deployment is automated with the GitHub Actions workflow at `.github/workflows/deploy.yml`:
+### Deploying an update
 
-1. Every time you `git push` to the `main` branch, GitHub Actions automatically runs.
-2. It packages the repository contents and publishes them to GitHub Pages.
-3. Your changes go live at the URL above within about a minute — no manual deploy step needed.
+Right now deploys are **manual** (the GitHub → Vercel auto-deploy connection is pending — see below). From the project folder:
 
-You can watch a deployment run under the **Actions** tab of the repo on GitHub.
+```bash
+npx vercel --prod --yes
+```
 
-### One-time setup (if not already enabled)
+This uploads the current files and publishes them straight to the live URL, typically in under a minute.
 
-GitHub Pages needs to be turned on once per repo:
+### Turning on auto-deploy from GitHub (recommended, one-time)
 
-1. Go to the repo on GitHub → **Settings → Pages**.
-2. Under **Build and deployment → Source**, select **GitHub Actions**.
-3. Push to `main` (or re-run the workflow from the **Actions** tab) and the site will publish.
+Once this is set up, every `git push` to `main` deploys automatically — no need to run the command above manually.
+
+1. Open **https://github.com/apps/vercel/installations/new** and install/authorize the Vercel GitHub App on the `JovanJose02` account, granting it access to `Personal_Projects`.
+2. Run `npx vercel git connect --yes` from the project folder (or connect it from the Vercel dashboard → Project → Settings → Git).
+3. From then on, pushing to `main` triggers a deploy automatically, viewable under the **Deployments** tab on [vercel.com](https://vercel.com).
 
 ### Custom domain (optional, later)
 
 If you buy a domain (e.g. `jovanfredy.com`):
-1. Add a `CNAME` file to the repo root containing just the domain name.
-2. In your domain registrar's DNS settings, add a `CNAME` record pointing to `jovanjose02.github.io`.
-3. In **Settings → Pages**, enter the custom domain and enable **Enforce HTTPS**.
+1. Go to the project on [vercel.com](https://vercel.com) → **Settings → Domains**.
+2. Add the domain and follow the DNS instructions Vercel gives you (usually a single `A` or `CNAME` record at your registrar).
+3. Vercel provisions HTTPS for it automatically.
 
 ---
 
@@ -102,7 +105,7 @@ The site already includes the on-page SEO needed for indexing:
 
 Google doesn't guarantee indexing timing, but you can speed it up:
 1. Go to [Google Search Console](https://search.google.com/search-console) and sign in with your Google account.
-2. Add the property `https://jovanjose02.github.io/Personal_Projects/`.
+2. Add the property `https://jovan-portfolio-eta.vercel.app/`.
 3. Verify ownership (Search Console will give you an HTML tag or file to add — ask me and I'll wire it in).
 4. Submit `sitemap.xml` under **Sitemaps**.
 5. Use **URL Inspection → Request Indexing** for the homepage.
@@ -132,4 +135,4 @@ All page copy lives in `index.html`, organized into clearly labeled `<section>` 
 
 ## Credits
 
-Built with plain HTML/CSS/JS. Design inspired by Apple's frosted-glass ("liquid glass") visual language. Fonts via [Google Fonts](https://fonts.google.com/specimen/Inter).
+Built with plain HTML/CSS/JS. Design inspired by Apple's frosted-glass ("liquid glass") visual language. Fonts via [Google Fonts](https://fonts.google.com/specimen/Poppins).
