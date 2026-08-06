@@ -9,7 +9,7 @@ A personal portfolio website showcasing my background as a Computer Science / Da
 ## Tech Stack
 
 - **HTML5 / CSS3 / vanilla JavaScript** — no framework, no build step, no dependencies to install.
-- **Google Fonts (Poppins)** loaded via CDN as the web fallback for Century Gothic (the site's primary declared font — not available on most systems by default, so Poppins is what most visitors actually see).
+- **Google Fonts (Inter)** loaded via CDN for typography, with a system-font fallback stack.
 - **Vercel** for free, always-on static hosting.
 
 Because there's no build step, the site runs identically whether opened as a local file or served on Vercel.
@@ -127,4 +127,4 @@ All page copy lives in `index.html`, organized into clearly labeled `<section>` 
 
 ## Credits
 
-Built with plain HTML/CSS/JS. Design inspired by Apple's frosted-glass ("liquid glass") visual language. Fonts via [Google Fonts](https://fonts.google.com/specimen/Poppins).
+Built with plain HTML/CSS/JS. Design inspired by Apple's frosted-glass ("liquid glass") visual language. Fonts via [Google Fonts](https://fonts.google.com/specimen/Inter).
