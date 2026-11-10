@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<!--
+  Awesome Motors — luxury & performance car configurator.
+  Rebuilt as a data-driven single-file app. Photography sourced from Wikimedia
+  Commons (via the Wikipedia API) for stable, real, hotlink-safe imagery.
+  Pricing is illustrative (see footer disclaimer), not a live pricing feed.
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Awesome Motors</title>
+<style>
+  :root {
+    --glass-bg: rgba(255, 255, 255, 0.46);
+    --glass-bg-strong: rgba(255, 255, 255, 0.64);
+    --glass-border: rgba(255, 255, 255, 0.75);
+    --glass-shadow: 0 8px 32px rgba(20, 20, 40, 0.16), inset 0 1px 1px rgba(255, 255, 255, 0.75);
+    --glass-shadow-soft: 0 4px 18px rgba(20, 20, 40, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+    --text-primary: #14141a;
+    --text-secondary: #6b6b76;
+    --accent: #0071e3;
+    --accent2: #7c3aed;
+    --danger: #d92d20;
+    --radius-xl: 32px;
+    --radius-lg: 24px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; min-height: 100%; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+                 "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-primary);
+    background: linear-gradient(135deg, #0e1220 0%, #1a1330 45%, #201225 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  .blob {
+    position: fixed;
+    border-radius: 50%;
+    filter: blur(90px);
+    opacity: 0.5;
+    z-index: 0;
+    pointer-events: none;
+    animation: float 20s ease-in-out infinite;
+  }
+  .blob.b1 { width: 560px; height: 560px; top: -200px; left: -160px;
+    background: radial-gradient(circle at 30% 30%, #3f6dff, #1d2a8f 70%); }
+  .blob.b2 { width: 500px; height: 500px; top: 15%; right: -180px;
+    background: radial-gradient(circle at 30% 30%, #c04dff, #5c15a8 70%); animation-delay: -7s; }
+  .blob.b3 { width: 460px; height: 460px; bottom: -180px; left: 15%;
+    background: radial-gradient(circle at 30% 30%, #ff4d8d, #a8155f 70%); animation-delay: -13s; }
+
+  @keyframes float {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(40px, -30px) scale(1.08); }
+    66% { transform: translate(-25px, 25px) scale(0.94); }
+  }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(18px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 44px 24px 80px;
+    color: #fff;
+  }
+
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: fit-content;
+    margin: 0 auto 52px;
+    padding: 10px 26px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.10);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: var(--glass-shadow-soft);
+    animation: fadeInUp 0.6s ease both;
+  }
+  .navbar .dot { width: 10px; height: 10px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+  .navbar span { font-weight: 600; font-size: 15px; letter-spacing: 0.2px; color: #fff; }
+
+  .hero { text-align: center; margin-bottom: 48px; animation: fadeInUp 0.6s ease 0.05s both; }
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(38px, 6.5vw, 60px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    background: linear-gradient(120deg, #8ab4ff, #c893ff 55%, #ff8fc0);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .hero p { margin: 12px 0 0; font-size: 17px; color: rgba(255,255,255,0.68); font-weight: 500; }
+
+  .glass {
+    position: relative;
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(26px) saturate(180%);
+    -webkit-backdrop-filter: blur(26px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: var(--glass-shadow);
+    border-radius: var(--radius-xl);
+  }
+  .glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(160deg, rgba(255,255,255,0.14), rgba(255,255,255,0) 40%);
+    pointer-events: none;
+  }
+
+  .form-card { padding: 36px; margin-bottom: 32px; animation: fadeInUp 0.6s ease 0.1s both; }
+
+  .field-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+  .field { display: flex; flex-direction: column; gap: 8px; }
+  .field label {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: rgba(255,255,255,0.55); padding-left: 4px;
+  }
+
+  select {
+    appearance: none; -webkit-appearance: none;
+    font-family: inherit; font-size: 16px; font-weight: 600;
+    color: #fff;
+    padding: 14px 42px 14px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background-color: rgba(255, 255, 255, 0.08);
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9' fill='none'><path d='M1 1L7 7L13 1' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+    cursor: pointer;
+    transition: box-shadow 0.2s ease, transform 0.15s ease, background-color 0.2s ease;
+  }
+  select:hover { background-color: rgba(255, 255, 255, 0.14); }
+  select:focus {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.35), inset 0 1px 2px rgba(0,0,0,0.15);
+  }
+  select option { color: #14141a; }
+
+  /* Color swatches */
+  .swatch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(64px, 1fr));
+    gap: 10px;
+  }
+  .swatch {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 6px 8px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.06);
+    cursor: pointer;
+    transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+  }
+  .swatch:hover { background: rgba(255,255,255,0.12); transform: translateY(-1px); }
+  .swatch.selected {
+    border-color: rgba(255,255,255,0.7);
+    background: rgba(255,255,255,0.16);
+    box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.35);
+  }
+  .swatch .chip {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.6);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.25), 0 2px 6px rgba(0,0,0,0.25);
+  }
+  .swatch span { font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.75); }
+
+  .actions { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-top: 32px; }
+
+  .btn {
+    position: relative; overflow: hidden;
+    font-family: inherit; font-size: 16px; font-weight: 700; letter-spacing: 0.01em;
+    padding: 14px 34px; border-radius: 999px; border: 1px solid transparent; cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+  }
+  .btn::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(160deg, rgba(255,255,255,0.4), rgba(255,255,255,0) 45%);
+    pointer-events: none;
+  }
+  .btn:active { transform: translateY(1px) scale(0.99); }
+  .btn-primary {
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    box-shadow: 0 10px 24px rgba(124, 58, 237, 0.4), inset 0 1px 1px rgba(255,255,255,0.4);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(124, 58, 237, 0.48), inset 0 1px 1px rgba(255,255,255,0.4); }
+  .btn-secondary {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: var(--glass-shadow-soft);
+  }
+  .btn-secondary:hover { transform: translateY(-2px); background: rgba(255, 255, 255, 0.18); }
+
+  .hint { text-align: center; color: rgba(255,255,255,0.5); font-size: 14px; margin-top: 18px; line-height: 1.6; }
+  .hint.error { color: #ff8a80; font-weight: 600; }
+
+  /* Results */
+  .results { display: grid; grid-template-columns: 1.6fr 1fr; gap: 24px; align-items: start; }
+  @media (max-width: 860px) { .results { grid-template-columns: 1fr; } }
+
+  .result-card { padding: 24px; display: flex; flex-direction: column; animation: fadeInUp 0.6s ease 0.15s both; }
+  .result-card h3 {
+    margin: 0 0 14px; font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.08em; color: rgba(255,255,255,0.5);
+  }
+
+  .image-frame {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: linear-gradient(160deg, rgba(255,255,255,0.12), rgba(255,255,255,0.02));
+    display: flex; align-items: center; justify-content: center;
+  }
+  .image-placeholder {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    font-size: 54px; color: rgba(255,255,255,0.35); text-align: center; padding: 12px;
+  }
+  .image-placeholder span { font-size: 14px; font-weight: 600; max-width: 220px; color: rgba(255,255,255,0.45); }
+  #carImage {
+    position: relative; width: 100%; height: 100%; object-fit: cover;
+    opacity: 0; transition: opacity 0.4s ease;
+    border-radius: var(--radius-lg);
+  }
+  .image-caption {
+    margin-top: 12px; text-align: center; font-size: 13px; color: rgba(255,255,255,0.45);
+  }
+
+  .spec-list { display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .spec-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; border-radius: var(--radius-md);
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .spec-row .k { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(255,255,255,0.5); }
+  .spec-row .v { font-size: 15px; font-weight: 700; color: #fff; text-align: right; }
+  .spec-row.price .v { font-size: 26px; font-weight: 800;
+    background: linear-gradient(120deg, #8ab4ff, #c893ff);
+    -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .spec-row .swatch-dot {
+    display: inline-block; width: 12px; height: 12px; border-radius: 50%;
+    margin-right: 8px; vertical-align: middle; border: 1px solid rgba(255,255,255,0.4);
+  }
+
+  footer { text-align: center; margin-top: 56px; font-size: 12px; font-weight: 500;
+    letter-spacing: 0.02em; color: rgba(255,255,255,0.4); line-height: 1.8; }
+  footer strong { color: rgba(255,255,255,0.6); }
+</style>
+</head>
+<body>
+
+  <div class="blob b1"></div>
+  <div class="blob b2"></div>
+  <div class="blob b3"></div>
+
+  <div class="page">
+
+    <div class="navbar">
+      <div class="dot"></div>
+      <span>Awesome Motors</span>
+    </div>
+
+    <div class="hero">
+      <h1>Configure Your Dream Car</h1>
+      <p>Nine legendary marques. Real photography. Instant pricing.</p>
+    </div>
+
+    <section class="glass form-card">
+      <div class="field-grid">
+
+        <div class="field">
+          <label for="yearSelect">Model Year</label>
+          <select id="yearSelect"></select>
+        </div>
+
+        <div class="field">
+          <label for="brandSelect">Brand</label>
+          <select id="brandSelect"></select>
+        </div>
+
+        <div class="field">
+          <label for="bodySelect">Body Style</label>
+          <select id="bodySelect"></select>
+        </div>
+
+        <div class="field">
+          <label>Color</label>
+          <div class="swatch-grid" id="colorSwatches"></div>
+        </div>
+
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" id="searchBtn" type="button">Search</button>
+        <button class="btn btn-secondary" id="resetBtn" type="button">Reset</button>
+      </div>
+
+      <p class="hint" id="hintText">Choose a year, brand, body style, and color, then click Search.</p>
+    </section>
+
+    <section class="results">
+
+      <div class="glass result-card">
+        <h3>Preview</h3>
+        <div class="image-frame">
+          <div class="image-placeholder" id="imagePlaceholder">
+            🏎️
+            <span>Select your configuration and search to preview the car</span>
+          </div>
+          <img id="carImage" alt="">
+        </div>
+        <p class="image-caption" id="imageCaption"></p>
+      </div>
+
+      <div class="glass result-card">
+        <h3>Specification</h3>
+        <div class="spec-list">
+          <div class="spec-row"><span class="k">Brand</span><span class="v" id="specBrand">—</span></div>
+          <div class="spec-row"><span class="k">Model</span><span class="v" id="specModel">—</span></div>
+          <div class="spec-row"><span class="k">Body Style</span><span class="v" id="specBody">—</span></div>
+          <div class="spec-row"><span class="k">Year</span><span class="v" id="specYear">—</span></div>
+          <div class="spec-row"><span class="k">Color</span><span class="v" id="specColor">—</span></div>
+          <div class="spec-row price"><span class="k">Est. Price</span><span class="v" id="specPrice">—</span></div>
+        </div>
+      </div>
+
+    </section>
+
+    <footer>
+      College Board Performance Task — reimagined as a luxury car configurator.<br>
+      Photography courtesy of Wikimedia Commons contributors. Pricing is an
+      <strong>illustrative estimate</strong> derived from approximate published MSRPs and does not
+      reflect live dealer pricing.
+    </footer>
+
+  </div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ---------------------------------------------------------------------
+   * Data
+   * ------------------------------------------------------------------- */
+
+  var YEARS = [];
+  for (var y = 2014; y <= 2026; y++) YEARS.push(y);
+  var CURRENT_YEAR = 2026;
+  var ANNUAL_APPRECIATION = 0.025; // used to back-calculate estimated historical pricing
+
+  var COLORS = [
+    { name: "Red",    hex: "#d1332f" },
+    { name: "Black",  hex: "#1b1b1f" },
+    { name: "White",  hex: "#f4f4f4" },
+    { name: "Silver", hex: "#b9bcc2" },
+    { name: "Blue",   hex: "#2b5fd9" },
+    { name: "Grey",   hex: "#6b6f76" },
+    { name: "Yellow", hex: "#f0c419" },
+    { name: "Green",  hex: "#2f6d4f" }
+  ];
+
+  var BODY_STYLES = ["Sport", "Convertible", "SUV", "Luxury"];
+
+  // basePrice = approximate current (2026) starting MSRP in USD.
+  var CARS = {
+    "Audi": {
+      "Sport":       { model: "R8 Coupe",           basePrice: 158600, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/2018_Audi_R8_Coupe_V10_plus_Front.jpg/3840px-2018_Audi_R8_Coupe_V10_plus_Front.jpg" },
+      "Convertible": { model: "A5 Cabriolet",        basePrice: 58900,  image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1d/Audi_A5_B10_DSC_7314.jpg/3840px-Audi_A5_B10_DSC_7314.jpg" },
+      "SUV":         { model: "Q8",                  basePrice: 74800,  image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/2018_Audi_Q8_S_Line_50_TDi_Quattro_3.0_Front.jpg/3840px-2018_Audi_Q8_S_Line_50_TDi_Quattro_3.0_Front.jpg" },
+      "Luxury":      { model: "A8 L",                basePrice: 88500,  image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/2018_Audi_A8_50_TDi_Quattro_Automatic_3.0.jpg/3840px-2018_Audi_A8_50_TDi_Quattro_Automatic_3.0.jpg" }
+    },
+    "BMW": {
+      "Sport":       { model: "M4 Competition",      basePrice: 81300,  image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/2021_BMW_M4_Competition_Automatic_3.0_Front.jpg/3840px-2021_BMW_M4_Competition_Automatic_3.0_Front.jpg" },
+      "Convertible": { model: "4 Series Convertible",basePrice: 61300,  image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/2021_BMW_420i_M_Sport_Automatic_2.0.jpg/3840px-2021_BMW_420i_M_Sport_Automatic_2.0.jpg" },
+      "SUV":         { model: "X5",                  basePrice: 68900,  image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/2019_BMW_X5_M50d_Automatic_3.0.jpg/3840px-2019_BMW_X5_M50d_Automatic_3.0.jpg" },
+      "Luxury":      { model: "7 Series",             basePrice: 96900,  image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/97/BMW_730d_%28G11%2C_Facelift%29_%E2%80%93_f_16012021.jpg/3840px-BMW_730d_%28G11%2C_Facelift%29_%E2%80%93_f_16012021.jpg" }
+    },
+    "Mercedes-Benz": {
+      "Sport":       { model: "AMG GT",               basePrice: 137900, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Festival_automobile_international_2015_-_Mercedes_AMG_GT_-_003.jpg/3840px-Festival_automobile_international_2015_-_Mercedes_AMG_GT_-_003.jpg" },
+      "Convertible": { model: "C-Class Cabriolet",    basePrice: 58500,  image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Mercedes-Benz_W206_IMG_6380.jpg/3840px-Mercedes-Benz_W206_IMG_6380.jpg" },
+      "SUV":         { model: "GLE 350",               basePrice: 65300,  image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Mercedes-Benz_GLE_350_d_4MATIC_AMG_Line_%28V_167%29_%E2%80%93_f_18042021.jpg/3840px-Mercedes-Benz_GLE_350_d_4MATIC_AMG_Line_%28V_167%29_%E2%80%93_f_18042021.jpg" },
+      "Luxury":      { model: "S-Class",               basePrice: 117900, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/55/Mercedes-Benz_W223_IMG_6663.jpg/3840px-Mercedes-Benz_W223_IMG_6663.jpg" }
+    },
+    "Aston Martin": {
+      "Sport":       { model: "Vantage",               basePrice: 191000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/2019_Aston_Martin_Vantage_V8_Automatic_4.0_%281%29.jpg/3840px-2019_Aston_Martin_Vantage_V8_Automatic_4.0_%281%29.jpg" },
+      "Convertible": { model: "DB11 Volante",          basePrice: 225000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/2018_Aston_Martin_DB11_V8_Automatic_4.0_Front.jpg/3840px-2018_Aston_Martin_DB11_V8_Automatic_4.0_Front.jpg" },
+      "SUV":         { model: "DBX707",                 basePrice: 236000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/2021_Aston_Martin_DBX_in_Midnight_Blue%2C_front_left.jpg/3840px-2021_Aston_Martin_DBX_in_Midnight_Blue%2C_front_left.jpg" },
+      "Luxury":      { model: "Rapide S",                basePrice: 219000, image: "https://upload.wikimedia.org/wikipedia/commons/8/8c/2014_AM_Rapide_S_front.jpg" }
+    },
+    "Ferrari": {
+      "Sport":       { model: "SF90 Stradale",         basePrice: 524000, image: "https://upload.wikimedia.org/wikipedia/commons/1/13/Red_2019_Ferrari_SF90_Stradale_%2848264238897%29_%28cropped%29.jpg" },
+      "Convertible": { model: "Portofino M",            basePrice: 245000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Ferrari_Portofino_M_IMG_4351.jpg/3840px-Ferrari_Portofino_M_IMG_4351.jpg" },
+      "SUV":         { model: "Purosangue",             basePrice: 462000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Ferrari_Purosangue_DSC_7008.jpg/3840px-Ferrari_Purosangue_DSC_7008.jpg" },
+      "Luxury":      { model: "Roma",                    basePrice: 247000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/2021_Ferrari_Roma_in_Rosso_Fiorano%2C_front_right.jpg/3840px-2021_Ferrari_Roma_in_Rosso_Fiorano%2C_front_right.jpg" }
+    },
+    "Lamborghini": {
+      "Sport":       { model: "Huracán",                basePrice: 261000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/2017_Lamborghini_Huracan_LP610.jpg/3840px-2017_Lamborghini_Huracan_LP610.jpg" },
+      "Convertible": { model: "Aventador Roadster",     basePrice: 520000, image: "https://upload.wikimedia.org/wikipedia/commons/e/ed/Lamborghini_Aventador_S_%2844554%29.jpg" },
+      "SUV":         { model: "Urus",                    basePrice: 233000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Lamborghini_Urus_SE_DSC_8524.jpg/3840px-Lamborghini_Urus_SE_DSC_8524.jpg" },
+      "Luxury":      { model: "Revuelto",                 basePrice: 608000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Lamborghini_Revuelto_DSC_6985_%28cropped%29.jpg/3840px-Lamborghini_Revuelto_DSC_6985_%28cropped%29.jpg" }
+    },
+    "Maserati": {
+      "Sport":       { model: "MC20",                    basePrice: 232000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bb/Maserati_MC20_IAA_2021_1X7A0087.jpg/3840px-Maserati_MC20_IAA_2021_1X7A0087.jpg" },
+      "Convertible": { model: "GranCabrio",              basePrice: 176000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/00/Maserati_GranTurismo_Trofeo_1X7A0828.jpg/3840px-Maserati_GranTurismo_Trofeo_1X7A0828.jpg" },
+      "SUV":         { model: "Levante",                  basePrice: 83000,  image: "https://upload.wikimedia.org/wikipedia/commons/5/5f/Maserati_Levante_S_%2801%29.jpg" },
+      "Luxury":      { model: "Quattroporte",             basePrice: 110000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/2015_Maserati_Quattroporte_DV6_Automatic_3.0_Front.jpg/3840px-2015_Maserati_Quattroporte_DV6_Automatic_3.0_Front.jpg" }
+    },
+    "Rolls-Royce": {
+      "Sport":       { model: "Wraith",                   basePrice: 343000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/2019_Rolls-Royce_Wraith_V12_Automatic_6.6.jpg/3840px-2019_Rolls-Royce_Wraith_V12_Automatic_6.6.jpg" },
+      "Convertible": { model: "Dawn",                      basePrice: 382000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/2019_Rolls-Royce_Dawn_V12_Automatic_6.6.jpg/3840px-2019_Rolls-Royce_Dawn_V12_Automatic_6.6.jpg" },
+      "SUV":         { model: "Cullinan",                  basePrice: 362000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/2019_Rolls-Royce_Cullinan_V12_Automatic_6.75_Front.jpg/3840px-2019_Rolls-Royce_Cullinan_V12_Automatic_6.75_Front.jpg" },
+      "Luxury":      { model: "Phantom",                   basePrice: 460000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1c/2019_Rolls-Royce_Phantom_V12_Automatic_6.75.jpg/3840px-2019_Rolls-Royce_Phantom_V12_Automatic_6.75.jpg" }
+    },
+    "Bentley": {
+      "Sport":       { model: "Continental GT",           basePrice: 232000, image: "https://upload.wikimedia.org/wikipedia/commons/e/e1/Bentley_Continental_GT_First_Edition_%2849919050697%29_%28cropped%29_%28cropped%29.jpg" },
+      "Convertible": { model: "Continental GTC",          basePrice: 255000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Bentley_Continental_GTC%2C_IAA_2011%2C_Frankfurt_am_Main_%28DSC03232%29.jpg/3840px-Bentley_Continental_GTC%2C_IAA_2011%2C_Frankfurt_am_Main_%28DSC03232%29.jpg" },
+      "SUV":         { model: "Bentayga",                  basePrice: 204000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Bentley_Bentayga_V8_%28FL%29_IMG_0005.jpg/3840px-Bentley_Bentayga_V8_%28FL%29_IMG_0005.jpg" },
+      "Luxury":      { model: "Flying Spur",               basePrice: 226000, image: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Bentley_Flying_Spur_W12_Speed_%282019%29_1X7A1636.jpg/3840px-Bentley_Flying_Spur_W12_Speed_%282019%29_1X7A1636.jpg" }
+    }
+  };
+
+  /* ---------------------------------------------------------------------
+   * DOM references
+   * ------------------------------------------------------------------- */
+
+  var yearSelect = document.getElementById("yearSelect");
+  var brandSelect = document.getElementById("brandSelect");
+  var bodySelect = document.getElementById("bodySelect");
+  var colorSwatches = document.getElementById("colorSwatches");
+  var hintText = document.getElementById("hintText");
+
+  var carImage = document.getElementById("carImage");
+  var imagePlaceholder = document.getElementById("imagePlaceholder");
+  var imageCaption = document.getElementById("imageCaption");
+
+  var specBrand = document.getElementById("specBrand");
+  var specModel = document.getElementById("specModel");
+  var specBody = document.getElementById("specBody");
+  var specYear = document.getElementById("specYear");
+  var specColor = document.getElementById("specColor");
+  var specPrice = document.getElementById("specPrice");
+
+  var selectedColor = null;
+
+  /* ---------------------------------------------------------------------
+   * Populate selects
+   * ------------------------------------------------------------------- */
+
+  function fillSelect(select, values, placeholder) {
+    var placeholderOpt = document.createElement("option");
+    placeholderOpt.value = "";
+    placeholderOpt.textContent = placeholder;
+    select.appendChild(placeholderOpt);
+    values.forEach(function (v) {
+      var opt = document.createElement("option");
+      opt.value = v;
+      opt.textContent = v;
+      select.appendChild(opt);
+    });
+  }
+
+  fillSelect(yearSelect, YEARS.slice().reverse().map(String), "Choose a year…");
+  fillSelect(brandSelect, Object.keys(CARS), "Choose a brand…");
+  fillSelect(bodySelect, BODY_STYLES, "Choose a body style…");
+
+  COLORS.forEach(function (c) {
+    var el = document.createElement("div");
+    el.className = "swatch";
+    el.setAttribute("data-color", c.name);
+    el.setAttribute("role", "button");
+    el.setAttribute("tabindex", "0");
+    el.innerHTML = '<span class="chip" style="background:' + c.hex + '"></span><span>' + c.name + "</span>";
+    el.addEventListener("click", function () { selectColor(c.name); });
+    el.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectColor(c.name); }
+    });
+    colorSwatches.appendChild(el);
+  });
+
+  function selectColor(name) {
+    selectedColor = name;
+    Array.prototype.forEach.call(colorSwatches.children, function (el) {
+      el.classList.toggle("selected", el.getAttribute("data-color") === name);
+    });
+  }
+
+  function colorHex(name) {
+    var c = COLORS.filter(function (c) { return c.name === name; })[0];
+    return c ? c.hex : "#999";
+  }
+
+  /* ---------------------------------------------------------------------
+   * Pricing
+   * ------------------------------------------------------------------- */
+
+  function estimatePrice(basePrice, year) {
+    var yearsBack = CURRENT_YEAR - year;
+    var price = basePrice / Math.pow(1 + ANNUAL_APPRECIATION, yearsBack);
+    return Math.round(price / 100) * 100;
+  }
+
+  function formatCurrency(n) {
+    return "$" + n.toLocaleString("en-US");
+  }
+
+  /* ---------------------------------------------------------------------
+   * Search / reset
+   * ------------------------------------------------------------------- */
+
+  function showHint(message, isError) {
+    hintText.textContent = message;
+    hintText.classList.toggle("error", !!isError);
+  }
+
+  function runSearch() {
+    var year = yearSelect.value;
+    var brand = brandSelect.value;
+    var body = bodySelect.value;
+    var color = selectedColor;
+
+    if (!year) { showHint("Please choose a model year.", true); yearSelect.focus(); return; }
+    if (!brand) { showHint("Please choose a brand.", true); brandSelect.focus(); return; }
+    if (!body) { showHint("Please choose a body style.", true); bodySelect.focus(); return; }
+    if (!color) { showHint("Please choose a color.", true); return; }
+
+    var entry = CARS[brand] && CARS[brand][body];
+    if (!entry) {
+      showHint("That combination isn't available at Awesome Motors.", true);
+      return;
+    }
+
+    var price = estimatePrice(entry.basePrice, parseInt(year, 10));
+
+    specBrand.textContent = brand;
+    specModel.textContent = entry.model;
+    specBody.textContent = body;
+    specYear.textContent = year;
+    specColor.innerHTML = '<span class="swatch-dot" style="background:' + colorHex(color) + '"></span>' + color;
+    specPrice.textContent = formatCurrency(price);
+
+    carImage.alt = brand + " " + entry.model;
+    carImage.style.opacity = "0";
+    carImage.src = entry.image;
+    imageCaption.textContent = brand + " " + entry.model + " — shown in a representative color; exact color availability varies.";
+
+    showHint("Showing your " + year + " " + brand + " " + entry.model + " in " + color + ".", false);
+  }
+
+  function resetForm() {
+    yearSelect.value = "";
+    brandSelect.value = "";
+    bodySelect.value = "";
+    selectedColor = null;
+    Array.prototype.forEach.call(colorSwatches.children, function (el) {
+      el.classList.remove("selected");
+    });
+
+    [specBrand, specModel, specBody, specYear, specColor, specPrice].forEach(function (el) {
+      el.textContent = "—";
+    });
+
+    carImage.removeAttribute("src");
+    carImage.style.opacity = "0";
+    imageCaption.textContent = "";
+    showHint("Choose a year, brand, body style, and color, then click Search.", false);
+  }
+
+  carImage.addEventListener("load", function () { carImage.style.opacity = "1"; });
+  carImage.addEventListener("error", function () { carImage.style.opacity = "0"; });
+
+  document.getElementById("searchBtn").addEventListener("click", runSearch);
+  document.getElementById("resetBtn").addEventListener("click", resetForm);
+  imagePlaceholder.addEventListener("click", resetForm);
+
+  resetForm();
+})();
+</script>
+</body>
+</html>

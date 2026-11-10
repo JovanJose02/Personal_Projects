@@ -1,6 +1,6 @@
 # Jovan Jose Asker Fredy — Portfolio Website
 
-A personal portfolio website showcasing my background as a Computer Science / Data Science &amp; AI student, built with plain HTML, CSS, and JavaScript in an Apple "liquid glass" visual style (frosted, translucent panels over a photo background, light/dark mode).
+A personal portfolio website showcasing my background as a Computer Science / Data Science &amp; AI student, built with plain HTML, CSS, and JavaScript in a futuristic "liquid glass" visual style (frosted, translucent panels, layered glass hero, light/dark mode). The design was adapted from a Figma Make export ("Futuristic Glass Portfolio Page") into a no-build static site.
 
 **Live site:** https://jovan-portfolio-eta.vercel.app
 
@@ -9,7 +9,7 @@ A personal portfolio website showcasing my background as a Computer Science / Da
 ## Tech Stack
 
 - **HTML5 / CSS3 / vanilla JavaScript** — no framework, no build step, no dependencies to install.
-- **Google Fonts (Inter)** loaded via CDN for typography, with a system-font fallback stack.
+- **Google Fonts (DM Sans + Manrope)** loaded via CDN for typography, with a system-font fallback stack.
 - **Vercel** for free, always-on static hosting.
 
 Because there's no build step, the site runs identically whether opened as a local file or served on Vercel.
@@ -20,10 +20,12 @@ Because there's no build step, the site runs identically whether opened as a loc
 
 ```
 Personal_Projects/
+├── vercel.json                # Serves the "Personal Website/" folder at the site root
+└── Personal Website/
 ├── index.html                 # All page content/sections
 ├── assets/
 │   ├── css/style.css          # Design system (glass effect, layout, themes)
-│   ├── js/main.js             # Theme toggle, nav, scroll reveal, headshot swap
+│   ├── js/main.js             # Theme toggle, mobile menu, active nav, scroll reveal
 │   ├── images/
 │   │   ├── favicon.svg
 │   │   ├── headshot-placeholder.svg   # Shown until you add a real photo (see below)
@@ -51,7 +53,7 @@ open index.html      # macOS
 
 **Option B — serve it (recommended, avoids any relative-path quirks)**
 ```bash
-cd Personal_Projects
+cd "Personal_Projects/Personal Website"
 python3 -m http.server 8000
 # then visit http://localhost:8000
 ```
@@ -106,25 +108,22 @@ It typically takes anywhere from a few days to a couple of weeks for a new page 
 
 ---
 
-## Adding Your Real Headshot
+## Headshot
 
-The hero section currently shows a placeholder monogram avatar. To use your real photo:
-
-1. Save your headshot as `headshot.jpg` (square photo works best) into `assets/images/`.
-2. That's it — `main.js` automatically detects the file and swaps it in; no HTML edits needed.
+The hero glass card shows `assets/images/headshot.jpg` (square photo works best). Replace that file to update it.
 
 ## Adding Your Resume PDF
 
-The "Resume" button in the nav bar links to `assets/resume/resume.pdf`. Drop your resume PDF at that exact path (same filename) and the download button will work automatically.
+The "Resume" button in the nav bar opens `assets/resume/resume.pdf`. Replace that file (same filename) to update it.
 
 ---
 
 ## Updating Content
 
-All page copy lives in `index.html`, organized into clearly labeled `<section>` blocks (`#about`, `#experience`, `#projects`, `#skills`, `#certifications`, `#contact`). Edit the text directly — no templating engine involved. Colors, spacing, and the glass effect live in `assets/css/style.css` under the `:root` CSS variables at the top of the file.
+All page copy lives in `index.html`, organized into clearly labeled `<section>` blocks (`#about`, `#experience`, `#projects`, `#skills`, `#certifications`, `#beyond`, `#contact`). Edit the text directly — no templating engine involved. Colors, spacing, and the glass effect live in `assets/css/style.css` under the `:root` CSS variables at the top of the file.
 
 ---
 
 ## Credits
 
-Built with plain HTML/CSS/JS. Design inspired by Apple's frosted-glass ("liquid glass") visual language. Fonts via [Google Fonts](https://fonts.google.com/specimen/Inter).
+Built with plain HTML/CSS/JS. Glass design adapted from a Figma Make export. Fonts via [Google Fonts](https://fonts.google.com/) (DM Sans, Manrope).

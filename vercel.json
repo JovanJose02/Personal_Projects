@@ -1,0 +1,7 @@
+{
+  "cleanUrls": false,
+  "rewrites": [
+    { "source": "/", "destination": "/Personal%20Website/index.html" },
+    { "source": "/:path((?!Personal%20Website/).*)", "destination": "/Personal%20Website/:path" }
+  ]
+}
